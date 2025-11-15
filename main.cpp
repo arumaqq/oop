@@ -106,7 +106,6 @@ int main() {
             }
         }
 
-        // === ПОИСК ===
         else if (cmd == "search") {
             std::string query;
             std::getline(ss, query);
@@ -125,13 +124,11 @@ int main() {
             }
         }
 
-        // === СОРТИРОВКА ===
         else if (cmd == "sort") {
             std::string field;
-            // Извлекаем остаток строки после команды
             size_t pos = line.find("sort");
             if (pos != std::string::npos) {
-                field = line.substr(pos + 4); // "sort" = 4 символа
+                field = line.substr(pos + 4); 
             }
             field = Validator::trim(field);
             if (field.empty()) {
@@ -141,7 +138,6 @@ int main() {
                     std::string field_lower = field;
                     std::transform(field_lower.begin(), field_lower.end(), field_lower.begin(), ::tolower);
                     std::cout << "Sorted by '" << field_lower << "'.\n";
-                    // Показываем отсортированный список
                     for (size_t i = 0; i < book.getContacts().size(); ++i) {
                         printContact(book.getContacts()[i], i);
                     }

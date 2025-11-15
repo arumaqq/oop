@@ -19,7 +19,6 @@ void PhoneBook::editContact(size_t index, const Contact& newContact) {
     contacts[index] = newContact;
 }
 
-// === ПОИСК С КИРИЛЛИЦЕЙ ===
 std::vector<Contact> PhoneBook::search(const std::string& query) const {
     std::vector<Contact> results;
     if (query.empty()) return results;
@@ -43,14 +42,11 @@ std::vector<Contact> PhoneBook::search(const std::string& query) const {
     return results;
 }
 
-// === СОРТИРОВКА С КИРИЛЛИЦЕЙ ===
 bool PhoneBook::sortByField(const std::string& field) {
     std::string f = field;
-    // Удаляем все пробелы и приводим к нижнему регистру
     f.erase(std::remove_if(f.begin(), f.end(), ::isspace), f.end());
     std::transform(f.begin(), f.end(), f.begin(), ::tolower);
 
-    // Функция сравнения строк с поддержкой CP-1251
     auto compareStrings = [](const std::string& a, const std::string& b) {
         size_t len = std::min(a.length(), b.length());
         for (size_t i = 0; i < len; ++i) {
@@ -84,7 +80,6 @@ bool PhoneBook::sortByField(const std::string& field) {
     return false;
 }
 
-// === ФАЙЛЫ ===
 void PhoneBook::saveToFile(const std::string& filename) const {
     std::ofstream file(filename);
     for (const auto& c : contacts) {

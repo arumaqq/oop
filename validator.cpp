@@ -5,17 +5,10 @@
 #include <sstream>
 #include <ctime>
 
-// =====================================================
-// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ CP-1251 (Windows-консоль)
-// =====================================================
 static bool isRussianLetter(unsigned char c) {
-    // CP-1251:
-    // А-Я: 0xC0-0xDF
-    // а-я: 0xE0-0xFF
-    // Ё: 0xA8, ё: 0xB8
-    return (c >= 0xC0 && c <= 0xDF) ||   // А-Я
-           (c >= 0xE0 && c <= 0xFF) ||   // а-я
-           c == 0xA8 || c == 0xB8;       // Ё, ё
+    return (c >= 0xC0 && c <= 0xDF) ||   
+           (c >= 0xE0 && c <= 0xFF) ||   
+           c == 0xA8 || c == 0xB8;       
 }
 
 static bool isLatinLetter(unsigned char c) {
@@ -30,7 +23,6 @@ static bool isLetter(char ch) {
 static bool isDigit(char c) {
     return c >= '0' && c <= '9';
 }
-// =====================================================
 
 std::string Validator::trim(const std::string& str) {
     size_t start = str.find_first_not_of(" \t");
@@ -43,21 +35,17 @@ bool Validator::validateName(const std::string& name) {
     std::string t = trim(name);
     if (t.empty()) return false;
 
-    // Должно начинаться с буквы (латинская или русская)
     if (!isLetter(t[0])) return false;
 
     for (size_t i = 0; i < t.size(); ++i) {
         unsigned char c = static_cast<unsigned char>(t[i]);
 
-        // Разрешены: буквы, цифры, пробел, дефис
         if (!isLetter(c) && !isDigit(c) && c != ' ' && c != '-') {
             return false;
         }
 
-        // Не начинается и не заканчивается на дефис
         if (c == '-' && (i == 0 || i == t.size() - 1)) return false;
 
-        // Не два дефиса подряд
         if (c == '-' && i > 0 && t[i - 1] == '-') return false;
     }
 
@@ -71,7 +59,6 @@ bool Validator::validateEmail(const std::string& email) {
     size_t at = t.find('@');
     if (at == std::string::npos || at == 0 || at == t.size() - 1) return false;
 
-    // Убираем пробелы вокруг @
     while (at > 0 && t[at - 1] == ' ') { t.erase(at - 1, 1); --at; }
     while (at + 1 < t.size() && t[at + 1] == ' ') t.erase(at + 1, 1);
 

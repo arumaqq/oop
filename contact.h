@@ -11,7 +11,6 @@ public:
     Contact(const std::string& firstName, const std::string& lastName,
             const std::string& email, const PhoneNumber& phone);
 
-    // Геттеры
     std::string getFirstName() const { return firstName; }
     std::string getLastName() const { return lastName; }
     std::string getMiddleName() const { return middleName; }
@@ -20,7 +19,6 @@ public:
     std::string getEmail() const { return email; }
     const std::vector<PhoneNumber>& getPhones() const { return phones; }
 
-    // Сеттеры с валидацией
     void setFirstName(const std::string& name);
     void setLastName(const std::string& name);
     void setMiddleName(const std::string& name);
@@ -31,7 +29,6 @@ public:
     void addPhone(const PhoneNumber& phone);
     void removePhone(size_t index);
 
-    // Сериализация
     std::string toString() const;
     static Contact fromString(const std::string& str);
 
