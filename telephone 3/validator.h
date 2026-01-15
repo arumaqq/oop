@@ -1,4 +1,4 @@
-// validator.h
+
 #ifndef VALIDATOR_H
 #define VALIDATOR_H
 
@@ -12,5 +12,6 @@ public:
     static bool validatePhone(const std::string& phone);
     static bool validateDate(const std::string& date);
 };
+
 
 #endif 
