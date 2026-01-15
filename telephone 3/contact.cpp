@@ -1,4 +1,4 @@
-// contact.cpp
+
 #include "contact.h"
 #include "validator.h"
 #include <sstream>
@@ -98,4 +98,5 @@ Contact Contact::fromString(const std::string& str) {
         }
     }
     return c;
+
 }
