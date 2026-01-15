@@ -1,4 +1,4 @@
-// mainwindow.cpp
+
 #include "mainwindow.h"
 #include "contact.h"
 #include "phonenumber.h"
@@ -29,7 +29,6 @@ void MainWindow::setupUI() {
     setWindowTitle("Телефонная книга");
     setMinimumSize(900, 600);
 
-    // Set font that supports Cyrillic
     QFont font = this->font();
     font.setFamily("Arial");
     font.setPointSize(9);
@@ -40,10 +39,8 @@ void MainWindow::setupUI() {
 
     QHBoxLayout* mainLayout = new QHBoxLayout(centralWidget);
 
-    // Left side - Table and search
     QVBoxLayout* leftLayout = new QVBoxLayout();
 
-    // Search section
     QHBoxLayout* searchLayout = new QHBoxLayout();
     searchLineEdit = new QLineEdit(this);
     searchLineEdit->setPlaceholderText("Поиск по имени или email...");
@@ -53,7 +50,6 @@ void MainWindow::setupUI() {
     connect(searchButton, &QPushButton::clicked, this, &MainWindow::searchContacts);
     connect(searchLineEdit, &QLineEdit::returnPressed, this, &MainWindow::searchContacts);
 
-    // Sort section
     QHBoxLayout* sortLayout = new QHBoxLayout();
     sortComboBox = new QComboBox(this);
     sortComboBox->addItems({"Имя", "Фамилия", "Email"});
@@ -63,7 +59,6 @@ void MainWindow::setupUI() {
     sortLayout->addWidget(sortButton);
     connect(sortButton, &QPushButton::clicked, this, &MainWindow::sortContacts);
 
-    // Table
     tableWidget = new QTableWidget(this);
     tableWidget->setColumnCount(4);
     tableWidget->setHorizontalHeaderLabels({"Имя", "Фамилия", "Email", "Телефон"});
@@ -72,7 +67,6 @@ void MainWindow::setupUI() {
     tableWidget->horizontalHeader()->setStretchLastSection(true);
     connect(tableWidget, &QTableWidget::itemSelectionChanged, this, &MainWindow::onTableSelectionChanged);
 
-    // Buttons
     QHBoxLayout* buttonLayout = new QHBoxLayout();
     addButton = new QPushButton("Добавить", this);
     editButton = new QPushButton("Редактировать", this);
@@ -91,7 +85,6 @@ void MainWindow::setupUI() {
     leftLayout->addWidget(tableWidget);
     leftLayout->addLayout(buttonLayout);
 
-    // Right side - Form
     QGroupBox* formGroup = new QGroupBox("Данные контакта", this);
     QFormLayout* formLayout = new QFormLayout(formGroup);
 
@@ -112,7 +105,6 @@ void MainWindow::setupUI() {
     formLayout->addRow("Адрес:", addressEdit);
     formLayout->addRow("Дата рождения:", birthDateEdit);
 
-    // Phone section
     QHBoxLayout* phoneLayout = new QHBoxLayout();
     phoneTypeCombo = new QComboBox(this);
     phoneTypeCombo->addItems({"Рабочий", "Домашний", "Офисный"});
@@ -245,14 +237,12 @@ void MainWindow::searchContacts() {
     }
     std::vector<Contact> results = phoneBook.search(query.toUtf8().constData());
     
-    // Find real indices in the main contact list
     const auto& allContacts = phoneBook.getContacts();
     
     tableWidget->setRowCount(0);
     for (size_t i = 0; i < results.size(); ++i) {
         const Contact& c = results[i];
         
-        // Find the real index of this contact in the main list
         int realIndex = -1;
         for (size_t j = 0; j < allContacts.size(); ++j) {
             if (allContacts[j].getEmail() == c.getEmail() && 
@@ -311,14 +301,12 @@ void MainWindow::onTableSelectionChanged() {
         return;
     }
     
-    // Get the real index from the first column item
     QTableWidgetItem* firstItem = tableWidget->item(items.first()->row(), 0);
     if (firstItem) {
         QVariant indexData = firstItem->data(Qt::UserRole);
         if (indexData.isValid()) {
             currentEditIndex = indexData.toInt();
         } else {
-            // Fallback to row index if no stored index
             currentEditIndex = items.first()->row();
         }
     } else {
@@ -328,7 +316,6 @@ void MainWindow::onTableSelectionChanged() {
     editButton->setEnabled(true);
     deleteButton->setEnabled(true);
     
-    // Find the contact in the phonebook using the real index
     const auto& contacts = phoneBook.getContacts();
     if (currentEditIndex >= 0 && currentEditIndex < static_cast<int>(contacts.size())) {
         populateForm(contacts[currentEditIndex]);
@@ -376,7 +363,6 @@ Contact MainWindow::getContactFromForm() {
         throw std::invalid_argument("Необходимо добавить хотя бы один телефон");
     }
     
-    // Parse first phone (required for Contact constructor)
     QString firstPhone = phonesListWidget->item(0)->text();
     int colonPos = firstPhone.indexOf(':');
     if (colonPos <= 0) {
@@ -391,7 +377,6 @@ Contact MainWindow::getContactFromForm() {
     if (typeStr == "Домашний") type = PhoneType::Home;
     else if (typeStr == "Офисный") type = PhoneType::Office;
     
-    // Convert QString to std::string using UTF-8
     PhoneNumber phone(type, number.toUtf8().constData());
     Contact contact(firstName.toUtf8().constData(), lastName.toUtf8().constData(), 
                     email.toUtf8().constData(), phone);
@@ -407,7 +392,6 @@ Contact MainWindow::getContactFromForm() {
         contact.setBirthDate(birthDateStr.toUtf8().constData());
     }
     
-    // Add remaining phones
     for (int i = 1; i < phonesListWidget->count(); ++i) {
         QString phoneStr = phonesListWidget->item(i)->text();
         int colonPos = phoneStr.indexOf(':');
