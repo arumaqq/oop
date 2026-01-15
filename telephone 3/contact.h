@@ -1,4 +1,4 @@
-// contact.h
+
 #ifndef CONTACT_H
 #define CONTACT_H
 
@@ -37,5 +37,6 @@ private:
     std::string address, birthDate, email;
     std::vector<PhoneNumber> phones;
 };
+
 
 #endif
