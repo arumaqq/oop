@@ -1,4 +1,4 @@
-// mainwindow.h
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -54,7 +54,6 @@ private:
     QPushButton* clearButton;
     QComboBox* sortComboBox;
 
-    // Form fields
     QLineEdit* firstNameEdit;
     QLineEdit* lastNameEdit;
     QLineEdit* middleNameEdit;
