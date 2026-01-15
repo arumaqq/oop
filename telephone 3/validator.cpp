@@ -1,4 +1,4 @@
-// validator.cpp
+
 #include "validator.h"
 #include <algorithm>
 #include <cctype>
@@ -9,17 +9,15 @@ static bool isLatinLetter(unsigned char c) {
     return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
 }
 
-// Check if character is a Cyrillic letter in UTF-8 encoding
 static bool isCyrillicUTF8(const std::string& str, size_t& pos) {
     if (pos >= str.size()) return false;
     unsigned char c = static_cast<unsigned char>(str[pos]);
     
-    // UTF-8 Cyrillic range: 0xD0 0x90-0xBF and 0xD1 0x80-0x8F
     if (c == 0xD0) {
         if (pos + 1 < str.size()) {
             unsigned char c2 = static_cast<unsigned char>(str[pos + 1]);
             if (c2 >= 0x90 && c2 <= 0xBF) {
-                pos += 2; // Skip both bytes
+                pos += 2;
                 return true;
             }
         }
@@ -27,7 +25,7 @@ static bool isCyrillicUTF8(const std::string& str, size_t& pos) {
         if (pos + 1 < str.size()) {
             unsigned char c2 = static_cast<unsigned char>(str[pos + 1]);
             if (c2 >= 0x80 && c2 <= 0x8F) {
-                pos += 2; // Skip both bytes
+                pos += 2;
                 return true;
             }
         }
@@ -35,18 +33,15 @@ static bool isCyrillicUTF8(const std::string& str, size_t& pos) {
     return false;
 }
 
-// Check if character at position is a letter (Latin or Cyrillic in UTF-8)
 static bool isLetterUTF8(const std::string& str, size_t& pos) {
     if (pos >= str.size()) return false;
     unsigned char c = static_cast<unsigned char>(str[pos]);
     
-    // Check Latin letter
     if (isLatinLetter(c)) {
         pos++;
         return true;
     }
     
-    // Check Cyrillic letter in UTF-8
     size_t oldPos = pos;
     if (isCyrillicUTF8(str, pos)) {
         return true;
@@ -70,42 +65,35 @@ bool Validator::validateName(const std::string& name) {
     std::string t = trim(name);
     if (t.empty()) return false;
 
-    // Check first character is a letter (UTF-8 aware)
     size_t pos = 0;
     if (!isLetterUTF8(t, pos)) return false;
 
-    // Check remaining characters
     while (pos < t.size()) {
         unsigned char c = static_cast<unsigned char>(t[pos]);
         
-        // Check if it's a letter (Latin or Cyrillic)
         size_t oldPos = pos;
         if (isLetterUTF8(t, pos)) {
-            continue; // Letter found, continue
+            continue; 
         }
         pos = oldPos;
         
-        // Check if it's a digit
         if (isDigit(c)) {
             pos++;
             continue;
         }
         
-        // Check if it's space or hyphen
         if (c == ' ') {
             pos++;
             continue;
         }
         
         if (c == '-') {
-            // Hyphen cannot be at start or end, and cannot be doubled
             if (pos == 0 || pos == t.size() - 1) return false;
             if (pos > 0 && t[pos - 1] == '-') return false;
             pos++;
             continue;
         }
         
-        // Invalid character
         return false;
     }
 
