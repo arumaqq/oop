@@ -3,7 +3,6 @@ CONFIG += c++17
 TARGET = PhoneBook
 TEMPLATE = app
 
-# Уберите console для GUI приложения
 win32 {
     CONFIG -= console
     DEFINES += _CRT_SECURE_NO_WARNINGS
