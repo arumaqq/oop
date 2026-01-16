@@ -1,4 +1,4 @@
-// phonebookdatabase.h
+
 #ifndef PHONEBOOKDATABASE_H
 #define PHONEBOOKDATABASE_H
 
@@ -17,17 +17,14 @@ public:
     bool initialize(const std::string& dbPath = "phonebook.db");
     void close();
     
-    // CRUD операции
     bool addContact(const Contact& contact);
     bool removeContact(size_t id);
     bool updateContact(size_t id, const Contact& contact);
     std::vector<Contact> getAllContacts() const;
     Contact getContactById(size_t id) const;
     
-    // Очистка базы данных
     bool clearAll();
     
-    // Проверка подключения
     bool isOpen() const;
 
 private:
@@ -39,3 +36,4 @@ private:
 };
 
 #endif
+
