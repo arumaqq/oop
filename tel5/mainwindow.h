@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include "phonebook.h"
 
-// Форвард-декларации
 class QTableWidget;
 class QLineEdit;
 class QPushButton;
@@ -52,7 +51,6 @@ private:
     void loadContacts();
     void saveContacts();
 
-    // UI элементы
     QTableWidget* tableWidget;
     QLineEdit* searchLineEdit;
     QPushButton* searchButton;
@@ -63,7 +61,6 @@ private:
     QPushButton* sortButton;
     QPushButton* clearButton;
     
-    // Поля формы
     QLineEdit* firstNameEdit;
     QLineEdit* lastNameEdit;
     QLineEdit* middleNameEdit;
@@ -75,7 +72,6 @@ private:
     QPushButton* addPhoneButton;
     QListWidget* phonesListWidget;
     
-    // Меню и статус
     QMenu* storageMenu;
     QAction* saveToFileAction;
     QAction* loadFromFileAction;
