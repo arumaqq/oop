@@ -21,7 +21,6 @@ public:
     void saveToFile(const std::string& filename) const;
     void loadFromFile(const std::string& filename);
     
-    // Методы для работы с БД
     void initializeDatabase(const std::string& dbPath = "phonebook.db");
     void saveToDatabase() const;
     void loadFromDatabase();
@@ -31,9 +30,8 @@ private:
     std::vector<Contact> contacts;
     std::unique_ptr<PhoneBookDatabase> database;
     std::string dbPath;
-    
-    // Синхронизация с БД
+
     void syncToDatabase() const;
 };
 
-#endif // PHONEBOOK_H
+#endif 
