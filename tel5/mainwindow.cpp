@@ -31,7 +31,6 @@
 
 const QString MainWindow::DEFAULT_FILENAME = "phonebook.txt";
 
-// Конструктор
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , tableWidget(nullptr)
@@ -66,7 +65,6 @@ MainWindow::MainWindow(QWidget *parent)
     setupUI();
     setupStorageMenu();
     
-    // Инициализация статусной строки
     statusLabel = new QLabel("Хранилище: Файл + БД", this);
     statusBar()->addWidget(statusLabel);
     
@@ -74,12 +72,10 @@ MainWindow::MainWindow(QWidget *parent)
     updateTable();
 }
 
-// Деструктор
 MainWindow::~MainWindow() {
     saveContacts();
 }
 
-// Загрузка контактов
 void MainWindow::loadContacts() {
     try {
         phoneBook.loadFromFile(DEFAULT_FILENAME.toStdString());
@@ -88,7 +84,6 @@ void MainWindow::loadContacts() {
     }
 }
 
-// Сохранение контактов
 void MainWindow::saveContacts() {
     try {
         phoneBook.saveToFile(DEFAULT_FILENAME.toStdString());
@@ -97,7 +92,6 @@ void MainWindow::saveContacts() {
     }
 }
 
-// Настройка интерфейса
 void MainWindow::setupUI() {
     setWindowTitle("Телефонная книга");
     setMinimumSize(1100, 650);
@@ -108,11 +102,9 @@ void MainWindow::setupUI() {
     QHBoxLayout* mainLayout = new QHBoxLayout(centralWidget);
     mainLayout->setSpacing(10);
     
-    // ================= ЛЕВАЯ ЧАСТЬ - ТАБЛИЦА =================
     QVBoxLayout* leftLayout = new QVBoxLayout();
     leftLayout->setSpacing(10);
     
-    // Поиск
     QHBoxLayout* searchLayout = new QHBoxLayout();
     searchLineEdit = new QLineEdit(this);
     searchLineEdit->setPlaceholderText("Поиск по имени, фамилии или email...");
@@ -123,7 +115,6 @@ void MainWindow::setupUI() {
     connect(searchButton, &QPushButton::clicked, this, &MainWindow::searchContacts);
     connect(searchLineEdit, &QLineEdit::returnPressed, this, &MainWindow::searchContacts);
     
-    // Сортировка
     QHBoxLayout* sortLayout = new QHBoxLayout();
     sortComboBox = new QComboBox(this);
     sortComboBox->addItems({"Фамилия", "Имя", "Email", "Дата рождения"});
@@ -134,7 +125,6 @@ void MainWindow::setupUI() {
     sortLayout->addWidget(sortButton);
     connect(sortButton, &QPushButton::clicked, this, &MainWindow::sortContacts);
     
-    // Таблица контактов
     tableWidget = new QTableWidget(this);
     tableWidget->setColumnCount(7);
     tableWidget->setHorizontalHeaderLabels({
@@ -145,20 +135,18 @@ void MainWindow::setupUI() {
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     
-    // Настройка ширины колонок
-    tableWidget->setColumnWidth(0, 50);   // ID
-    tableWidget->setColumnWidth(1, 120);  // Фамилия
-    tableWidget->setColumnWidth(2, 120);  // Имя
-    tableWidget->setColumnWidth(3, 120);  // Отчество
-    tableWidget->setColumnWidth(4, 110);  // Дата рождения
-    tableWidget->setColumnWidth(5, 180);  // Email
-    tableWidget->setColumnWidth(6, 200);  // Телефон
+    tableWidget->setColumnWidth(0, 50);   
+    tableWidget->setColumnWidth(1, 120);  
+    tableWidget->setColumnWidth(2, 120);  
+    tableWidget->setColumnWidth(3, 120);  
+    tableWidget->setColumnWidth(4, 110);  
+    tableWidget->setColumnWidth(5, 180);  
+    tableWidget->setColumnWidth(6, 200);  
     
     tableWidget->horizontalHeader()->setStretchLastSection(true);
     connect(tableWidget, &QTableWidget::itemSelectionChanged, 
             this, &MainWindow::onTableSelectionChanged);
     
-    // Кнопки под таблицей
     QHBoxLayout* tableButtonsLayout = new QHBoxLayout();
     QPushButton* refreshButton = new QPushButton("Обновить таблицу", this);
     refreshButton->setFixedWidth(150);
@@ -174,43 +162,35 @@ void MainWindow::setupUI() {
     leftLayout->addWidget(tableWidget, 1);
     leftLayout->addLayout(tableButtonsLayout);
     
-    // ================= ПРАВАЯ ЧАСТЬ - ФОРМА =================
     QGroupBox* formGroup = new QGroupBox("Добавить/Редактировать контакт", this);
     QFormLayout* formLayout = new QFormLayout(formGroup);
     formLayout->setSpacing(10);
     formLayout->setLabelAlignment(Qt::AlignRight);
     
-    // Фамилия
     lastNameEdit = new QLineEdit(this);
     lastNameEdit->setPlaceholderText("Введите фамилию");
     formLayout->addRow("Фамилия *:", lastNameEdit);
     
-    // Имя
     firstNameEdit = new QLineEdit(this);
     firstNameEdit->setPlaceholderText("Введите имя");
     formLayout->addRow("Имя *:", firstNameEdit);
     
-    // Отчество
     middleNameEdit = new QLineEdit(this);
     middleNameEdit->setPlaceholderText("Введите отчество");
     formLayout->addRow("Отчество:", middleNameEdit);
     
-    // Email
     emailEdit = new QLineEdit(this);
     emailEdit->setPlaceholderText("example@mail.ru");
     formLayout->addRow("Email *:", emailEdit);
     
-    // Адрес
     addressEdit = new QLineEdit(this);
     addressEdit->setPlaceholderText("Введите адрес");
     formLayout->addRow("Адрес:", addressEdit);
     
-    // Телефоны
     QLabel* phonesLabel = new QLabel("Телефоны *:", this);
     phonesLabel->setAlignment(Qt::AlignRight | Qt::AlignTop);
     formLayout->addRow(phonesLabel);
     
-    // Поле для ввода телефона
     QHBoxLayout* phoneInputLayout = new QHBoxLayout();
     phoneNumberEdit = new QLineEdit(this);
     phoneNumberEdit->setPlaceholderText("+79161234567");
@@ -223,13 +203,11 @@ void MainWindow::setupUI() {
     phoneInputLayout->addWidget(addPhoneButton);
     formLayout->addRow("", phoneInputLayout);
     
-    // Список добавленных телефонов
     phonesListWidget = new QListWidget(this);
     phonesListWidget->setMaximumHeight(100);
     phonesListWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     formLayout->addRow("", phonesListWidget);
     
-    // Кнопки управления телефонами
     QHBoxLayout* phoneButtonsLayout = new QHBoxLayout();
     QPushButton* removePhoneButton = new QPushButton("- Удалить телефон", this);
     removePhoneButton->setFixedWidth(150);
@@ -237,14 +215,12 @@ void MainWindow::setupUI() {
     phoneButtonsLayout->addStretch();
     formLayout->addRow("", phoneButtonsLayout);
     
-    // Дата рождения
     birthDateEdit = new QDateEdit(this);
     birthDateEdit->setDate(QDate::currentDate());
     birthDateEdit->setDisplayFormat("dd-MM-yyyy");
     birthDateEdit->setCalendarPopup(true);
     formLayout->addRow("Дата рождения:", birthDateEdit);
     
-    // Кнопки управления формой
     QHBoxLayout* formButtonsLayout = new QHBoxLayout();
     addButton = new QPushButton("Добавить контакт", this);
     editButton = new QPushButton("Редактировать", this);
@@ -267,7 +243,6 @@ void MainWindow::setupUI() {
     
     formLayout->addRow("", formButtonsLayout);
     
-    // Подключение сигналов
     connect(addButton, &QPushButton::clicked, this, &MainWindow::addContact);
     connect(editButton, &QPushButton::clicked, this, &MainWindow::editContact);
     connect(deleteButton, &QPushButton::clicked, this, &MainWindow::deleteContact);
@@ -280,7 +255,6 @@ void MainWindow::setupUI() {
             return;
         }
         
-        // Проверка валидности телефона
         if (!Validator::validatePhone(number.toStdString())) {
             showError("Некорректный номер телефона");
             return;
@@ -303,16 +277,13 @@ void MainWindow::setupUI() {
     mainLayout->addWidget(formGroup, 1);
 }
 
-// Настройка меню хранилища
 void MainWindow::setupStorageMenu() {
     storageMenu = menuBar()->addMenu("Хранилище");
     
-    // Файловые операции
     saveToFileAction = storageMenu->addAction("Сохранить в файл");
     loadFromFileAction = storageMenu->addAction("Загрузить из файла");
     storageMenu->addSeparator();
     
-    // Операции с БД
     saveToDatabaseAction = storageMenu->addAction("Сохранить в БД");
     loadFromDatabaseAction = storageMenu->addAction("Загрузить из БД");
     clearDatabaseAction = storageMenu->addAction("Очистить БД");
@@ -326,7 +297,6 @@ void MainWindow::setupStorageMenu() {
     connect(initializeDatabaseAction, &QAction::triggered, this, &MainWindow::initializeDatabase);
 }
 
-// Обновление таблицы
 void MainWindow::updateTable() {
     tableWidget->setRowCount(0);
     const auto& contacts = phoneBook.getContacts();
@@ -336,32 +306,25 @@ void MainWindow::updateTable() {
         int row = tableWidget->rowCount();
         tableWidget->insertRow(row);
         
-        // ID
         tableWidget->setItem(row, 0, new QTableWidgetItem(QString::number(i + 1)));
         
-        // Фамилия
         tableWidget->setItem(row, 1, new QTableWidgetItem(
             QString::fromUtf8(c.getLastName().c_str())));
         
-        // Имя
         tableWidget->setItem(row, 2, new QTableWidgetItem(
             QString::fromUtf8(c.getFirstName().c_str())));
         
-        // Отчество
         QString middleName = QString::fromUtf8(c.getMiddleName().c_str());
         if (middleName.isEmpty()) middleName = "-";
         tableWidget->setItem(row, 3, new QTableWidgetItem(middleName));
         
-        // Дата рождения
         QString birthDate = QString::fromUtf8(c.getBirthDate().c_str());
         if (birthDate.isEmpty()) birthDate = "Не указана";
         tableWidget->setItem(row, 4, new QTableWidgetItem(birthDate));
         
-        // Email
         tableWidget->setItem(row, 5, new QTableWidgetItem(
             QString::fromUtf8(c.getEmail().c_str())));
         
-        // Телефоны
         QString phones;
         const auto& phoneList = c.getPhones();
         for (size_t j = 0; j < phoneList.size(); ++j) {
@@ -372,7 +335,6 @@ void MainWindow::updateTable() {
     }
 }
 
-// Добавление контакта
 void MainWindow::addContact() {
     try {
         Contact contact = getContactFromForm();
@@ -385,7 +347,6 @@ void MainWindow::addContact() {
     }
 }
 
-// Редактирование контакта
 void MainWindow::editContact() {
     if (currentEditIndex < 0 || currentEditIndex >= static_cast<int>(phoneBook.getContacts().size())) {
         showError("Выберите контакт для редактирования");
@@ -406,7 +367,6 @@ void MainWindow::editContact() {
     }
 }
 
-// Удаление контакта
 void MainWindow::deleteContact() {
     if (currentEditIndex < 0 || currentEditIndex >= static_cast<int>(phoneBook.getContacts().size())) {
         showError("Выберите контакт для удаления");
@@ -435,7 +395,6 @@ void MainWindow::deleteContact() {
     }
 }
 
-// Поиск контактов
 void MainWindow::searchContacts() {
     QString query = searchLineEdit->text().trimmed();
     if (query.isEmpty()) {
@@ -443,10 +402,9 @@ void MainWindow::searchContacts() {
         return;
     }
     
-    // Простая реализация поиска - фильтруем таблицу
     for (int row = 0; row < tableWidget->rowCount(); ++row) {
         bool found = false;
-        for (int col = 1; col <= 5; ++col) { // Проверяем колонки 1-5 (кроме ID)
+        for (int col = 1; col <= 5; ++col) { 
             QTableWidgetItem* item = tableWidget->item(row, col);
             if (item && item->text().contains(query, Qt::CaseInsensitive)) {
                 found = true;
@@ -457,7 +415,6 @@ void MainWindow::searchContacts() {
     }
 }
 
-// Сортировка контактов
 void MainWindow::sortContacts() {
     QString field = sortComboBox->currentText();
     std::string fieldStr;
@@ -473,7 +430,6 @@ void MainWindow::sortContacts() {
     }
 }
 
-// Обработка выбора в таблице
 void MainWindow::onTableSelectionChanged() {
     QList<QTableWidgetItem*> items = tableWidget->selectedItems();
     if (items.isEmpty()) {
@@ -483,7 +439,6 @@ void MainWindow::onTableSelectionChanged() {
         return;
     }
     
-    // Получаем индекс выбранной строки
     int row = items.first()->row();
     QTableWidgetItem* idItem = tableWidget->item(row, 0);
     if (idItem) {
@@ -492,7 +447,6 @@ void MainWindow::onTableSelectionChanged() {
         currentEditIndex = row;
     }
     
-    // Заполняем форму данными выбранного контакта
     const auto& contacts = phoneBook.getContacts();
     if (currentEditIndex >= 0 && currentEditIndex < static_cast<int>(contacts.size())) {
         populateForm(contacts[currentEditIndex]);
@@ -501,7 +455,6 @@ void MainWindow::onTableSelectionChanged() {
     }
 }
 
-// Заполнение формы данными контакта
 void MainWindow::populateForm(const Contact& contact) {
     firstNameEdit->setText(QString::fromUtf8(contact.getFirstName().c_str()));
     lastNameEdit->setText(QString::fromUtf8(contact.getLastName().c_str()));
@@ -509,7 +462,6 @@ void MainWindow::populateForm(const Contact& contact) {
     emailEdit->setText(QString::fromUtf8(contact.getEmail().c_str()));
     addressEdit->setText(QString::fromUtf8(contact.getAddress().c_str()));
     
-    // Дата рождения
     QString birthDateStr = QString::fromUtf8(contact.getBirthDate().c_str());
     if (!birthDateStr.isEmpty()) {
         QDate date = QDate::fromString(birthDateStr, "yyyy-MM-dd");
@@ -525,7 +477,6 @@ void MainWindow::populateForm(const Contact& contact) {
         birthDateEdit->setDate(QDate::currentDate());
     }
     
-    // Телефоны
     phonesListWidget->clear();
     const auto& phones = contact.getPhones();
     for (const auto& phone : phones) {
@@ -540,28 +491,23 @@ void MainWindow::populateForm(const Contact& contact) {
     }
 }
 
-// Получение контакта из формы
 Contact MainWindow::getContactFromForm() {
     std::string firstName = firstNameEdit->text().trimmed().toStdString();
     std::string lastName = lastNameEdit->text().trimmed().toStdString();
     std::string email = emailEdit->text().trimmed().toStdString();
     
-    // Проверка обязательных полей
     if (firstName.empty()) throw std::invalid_argument("Имя обязательно");
     if (lastName.empty()) throw std::invalid_argument("Фамилия обязательна");
     if (email.empty()) throw std::invalid_argument("Email обязателен");
     
-    // Проверка валидности
     if (!Validator::validateName(firstName)) throw std::invalid_argument("Некорректное имя");
     if (!Validator::validateName(lastName)) throw std::invalid_argument("Некорректная фамилия");
     if (!Validator::validateEmail(email)) throw std::invalid_argument("Некорректный email");
     
-    // Проверка наличия телефонов
     if (phonesListWidget->count() == 0) {
         throw std::invalid_argument("Добавьте хотя бы один телефон");
     }
     
-    // Берем первый телефон для конструктора
     QString firstPhone = phonesListWidget->item(0)->text();
     int colonPos = firstPhone.indexOf(':');
     if (colonPos <= 0) {
@@ -571,7 +517,6 @@ Contact MainWindow::getContactFromForm() {
     QString typeStr = firstPhone.left(colonPos).trimmed();
     QString number = firstPhone.mid(colonPos + 1).trimmed();
     
-    // Проверка валидности телефона
     if (!Validator::validatePhone(number.toStdString())) {
         throw std::invalid_argument("Некорректный номер телефона");
     }
@@ -583,7 +528,6 @@ Contact MainWindow::getContactFromForm() {
     PhoneNumber phone(type, number.toStdString());
     Contact contact(firstName, lastName, email, phone);
     
-    // Отчество
     std::string middleName = middleNameEdit->text().trimmed().toStdString();
     if (!middleName.empty()) {
         if (!Validator::validateName(middleName)) {
@@ -592,17 +536,14 @@ Contact MainWindow::getContactFromForm() {
         contact.setMiddleName(middleName);
     }
     
-    // Адрес
     std::string address = addressEdit->text().trimmed().toStdString();
     if (!address.empty()) {
         contact.setAddress(address);
     }
     
-    // Дата рождения
     QString birthDateStr = birthDateEdit->date().toString("yyyy-MM-dd");
     contact.setBirthDate(birthDateStr.toStdString());
     
-    // Остальные телефоны
     for (int i = 1; i < phonesListWidget->count(); ++i) {
         QString phoneStr = phonesListWidget->item(i)->text();
         int colonPos = phoneStr.indexOf(':');
@@ -623,7 +564,6 @@ Contact MainWindow::getContactFromForm() {
     return contact;
 }
 
-// Очистка формы
 void MainWindow::clearForm() {
     firstNameEdit->clear();
     lastNameEdit->clear();
@@ -638,7 +578,6 @@ void MainWindow::clearForm() {
     deleteButton->setEnabled(false);
 }
 
-// Сохранение в файл
 void MainWindow::saveToFile() {
     QString filename = QFileDialog::getSaveFileName(
         this, 
@@ -657,7 +596,6 @@ void MainWindow::saveToFile() {
     }
 }
 
-// Загрузка из файла
 void MainWindow::loadFromFile() {
     QString filename = QFileDialog::getOpenFileName(
         this,
@@ -677,7 +615,6 @@ void MainWindow::loadFromFile() {
     }
 }
 
-// Сохранение в БД
 void MainWindow::saveToDatabase() {
     try {
         phoneBook.saveToDatabase();
@@ -687,7 +624,6 @@ void MainWindow::saveToDatabase() {
     }
 }
 
-// Загрузка из БД
 void MainWindow::loadFromDatabase() {
     try {
         phoneBook.loadFromDatabase();
@@ -698,7 +634,6 @@ void MainWindow::loadFromDatabase() {
     }
 }
 
-// Очистка БД
 void MainWindow::clearDatabase() {
     QMessageBox::StandardButton reply = QMessageBox::question(
         this,
@@ -718,7 +653,6 @@ void MainWindow::clearDatabase() {
     }
 }
 
-// Инициализация БД
 void MainWindow::initializeDatabase() {
     QString dbPath = QFileDialog::getSaveFileName(
         this,
@@ -737,12 +671,10 @@ void MainWindow::initializeDatabase() {
     }
 }
 
-// Показать ошибку
 void MainWindow::showError(const QString& message) {
     QMessageBox::critical(this, "Ошибка", message);
 }
 
-// Показать информацию
 void MainWindow::showInfo(const QString& message) {
     QMessageBox::information(this, "Информация", message);
 }
