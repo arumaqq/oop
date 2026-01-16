@@ -86,7 +86,6 @@ Contact Contact::fromString(const std::string& str) {
     std::string token;
     std::vector<std::string> tokens;
     
-    // Разбиваем строку по точкам с запятой
     while (std::getline(ss, token, ';')) {
         tokens.push_back(token);
     }
@@ -95,19 +94,15 @@ Contact Contact::fromString(const std::string& str) {
         throw std::invalid_argument("Invalid contact string format");
     }
     
-    // Создаем контакт с минимальными обязательными полями
     PhoneNumber defaultPhone(PhoneType::Work, "80000000000");
     Contact contact(tokens[0], tokens[1], tokens[5], defaultPhone);
     
-    // Устанавливаем дополнительные поля
     contact.setMiddleName(tokens[2]);
     contact.setAddress(tokens[3]);
     contact.setBirthDate(tokens[4]);
     
-    // Очищаем телефоны (удалили дефолтный)
     contact.phones.clear();
     
-    // Парсим телефоны, если есть
     if (tokens.size() > 6 && tokens[6].find("phones:") == 0) {
         std::string phonesStr = tokens[6].substr(7);
         std::string phoneToken;
@@ -127,7 +122,7 @@ Contact Contact::fromString(const std::string& str) {
                             PhoneNumber phone(static_cast<PhoneType>(type), number);
                             contact.addPhone(phone);
                         } catch (...) {
-                            // Пропускаем некорректные телефоны
+        
                         }
                     }
                     pos = endPos + 1;
