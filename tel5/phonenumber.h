@@ -1,4 +1,4 @@
-// phonenumber.h
+
 #ifndef PHONENUMBER_H
 #define PHONENUMBER_H
 
@@ -16,5 +16,6 @@ private:
     PhoneType type;
     std::string number;
 };
+
 
 #endif
