@@ -139,7 +139,7 @@ void PhoneBook::loadFromFile(const std::string& filename) {
         try {
             contacts.push_back(Contact::fromString(line));
         } catch (...) {
-            // Пропускаем некорректные строки
+    
         }
     }
     
