@@ -1,4 +1,4 @@
-// phonebookdatabase.cpp
+
 #include "phonebookdatabase.h"
 #include "phonenumber.h"
 #include <QDebug>
@@ -34,8 +34,7 @@ void PhoneBookDatabase::close() {
 
 bool PhoneBookDatabase::createTables() {
     QSqlQuery query(db);
-    
-    // Создание таблицы контактов
+
     QString createContactsTable = 
         "CREATE TABLE IF NOT EXISTS contacts ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -52,7 +51,6 @@ bool PhoneBookDatabase::createTables() {
         return false;
     }
     
-    // Создание таблицы телефонов
     QString createPhonesTable = 
         "CREATE TABLE IF NOT EXISTS phone_numbers ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -133,7 +131,6 @@ bool PhoneBookDatabase::updateContact(size_t id, const Contact& contact) {
         return false;
     }
     
-    // Обновляем телефоны: удаляем старые и добавляем новые
     if (!removePhoneNumbers(id)) return false;
     return addPhoneNumbers(id, contact.getPhones());
 }
@@ -156,11 +153,9 @@ std::vector<Contact> PhoneBookDatabase::getAllContacts() const {
         std::string address = query.value(4).toString().toStdString();
         std::string birthDate = query.value(5).toString().toStdString();
         std::string email = query.value(6).toString().toStdString();
-        
-        // Получаем телефоны для этого контакта
+
         std::vector<PhoneNumber> phones = getPhoneNumbers(id);
-        
-        // Создаем контакт (нужен хотя бы один телефон для конструктора)
+
         PhoneNumber firstPhone = phones.empty() ? 
             PhoneNumber(PhoneType::Work, "000") : phones[0];
         
@@ -169,10 +164,7 @@ std::vector<Contact> PhoneBookDatabase::getAllContacts() const {
         contact.setAddress(address);
         contact.setBirthDate(birthDate);
         
-        // Если был временный телефон "000" (phones был пуст), оставляем его
-        // Если есть реальные телефоны, добавляем остальные
         if (!phones.empty() && phones.size() > 1) {
-            // Добавляем остальные телефоны (первый уже использован в конструкторе)
             for (size_t i = 1; i < phones.size(); ++i) {
                 contact.addPhone(phones[i]);
             }
@@ -206,7 +198,6 @@ Contact PhoneBookDatabase::getContactById(size_t id) const {
     
     std::vector<PhoneNumber> phones = getPhoneNumbers(id);
     
-    // Создаем контакт (нужен хотя бы один телефон для конструктора)
     PhoneNumber firstPhone = phones.empty() ? 
         PhoneNumber(PhoneType::Work, "000") : phones[0];
     
@@ -215,9 +206,7 @@ Contact PhoneBookDatabase::getContactById(size_t id) const {
     contact.setAddress(address);
     contact.setBirthDate(birthDate);
     
-    // Если есть реальные телефоны, добавляем остальные
     if (!phones.empty() && phones.size() > 1) {
-        // Добавляем остальные телефоны (первый уже использован в конструкторе)
         for (size_t i = 1; i < phones.size(); ++i) {
             contact.addPhone(phones[i]);
         }
@@ -291,3 +280,4 @@ std::vector<PhoneNumber> PhoneBookDatabase::getPhoneNumbers(size_t contactId) co
     
     return phones;
 }
+
